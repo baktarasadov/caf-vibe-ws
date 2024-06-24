@@ -1,3 +1,4 @@
+import { swaggerSpec, swaggerUi } from "@/core/config/swagger.config";
 import "@/core/di/di-globals";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -21,5 +22,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 app.disable("x-powered-by");
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 export default app;
