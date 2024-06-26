@@ -52,4 +52,12 @@ export class BaseRepository {
   bulkWrite(operations) {
     return this.model.bulkWrite(operations);
   }
+
+  async upsert(query, data) {
+    const findData = await this.findOne(query);
+
+    if (!findData) return this.create(data);
+
+    return this.update(findData._id, data);
+  }
 }
