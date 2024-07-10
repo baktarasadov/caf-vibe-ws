@@ -1,23 +1,9 @@
-import { roles } from "@/common/constants/role";
 import hashPassword from "@/common/helpers/hash-password";
 
 export class UserSeeder {
   constructor(userRepository, roleRepository) {
     this.userRepository = userRepository;
     this.roleRepository = roleRepository;
-  }
-
-  async createRole() {
-    const existingRoles = await this.roleRepository.findAll();
-    const existingRoleNames = existingRoles.map((role) => role.role);
-
-    const rolesToCreate = roles.filter(
-      (role) => !existingRoleNames.includes(role.role),
-    );
-
-    if (rolesToCreate.length > 0) {
-      await this.roleRepository.createMany(rolesToCreate);
-    }
   }
 
   async createAdmin() {

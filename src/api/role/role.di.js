@@ -7,3 +7,9 @@ export const roleDIKeys = {
 };
 
 container.register(roleDIKeys.repository, [], () => new RoleRepository());
+
+container.register(
+  roleDIKeys.seeder,
+  [roleDIKeys.repository],
+  (roleRepository) => new roleDIKeys(roleRepository),
+);

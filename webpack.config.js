@@ -43,7 +43,7 @@ module.exports = (env, argv) => {
       new CleanWebpackPlugin(), // Cleans the dist folder on each build
       new webpack.DefinePlugin({
         "process.env.NODE_ENV": JSON.stringify(
-          isProduction ? "production" : "development"
+          isProduction ? "production" : "development",
         ),
       }),
     ],
