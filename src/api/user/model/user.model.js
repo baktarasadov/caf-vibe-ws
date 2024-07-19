@@ -1,30 +1,23 @@
 import { contactSchema } from "@/common/schema/model/contact-model.schema";
 import mongoose, { Schema } from "mongoose";
 
-import { passwordResetSchema } from "./password-reset";
+import { passwordResetCodeSchema } from "./password-reset-code";
 import { refreshTokenSchema } from "./refresh-token";
 
 const userSchema = new Schema(
   {
-    email: {
-      type: String,
-      trim: true,
-      required: true,
-      unique: true,
-      index: true,
-    },
     fullName: {
       type: String,
       required: true,
       trim: true,
     },
-    profileImg: {
+    profileImage: {
       type: String,
     },
     password: { type: String, required: true, trim: true },
     contact: contactSchema,
-    refreshToken: refreshTokenSchema,
-    reset: passwordResetSchema,
+    token: refreshTokenSchema,
+    passwordResetCodeSchema,
     role: { type: Schema.Types.Number, ref: "Role", required: true },
   },
   {

@@ -7,7 +7,6 @@ export class UserSeeder {
   }
 
   async createAdmin() {
-    await this.createRole();
     const data = await this.userRepository.findOne({ role: 1 });
 
     if (!data) {

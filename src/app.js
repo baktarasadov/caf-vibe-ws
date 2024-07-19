@@ -1,3 +1,4 @@
+import "express-async-errors";
 import { swaggerSpec, swaggerUi } from "@/core/config/swagger.config";
 import "@/core/di/di-globals";
 import cookieParser from "cookie-parser";
@@ -5,6 +6,7 @@ import cors from "cors";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
 
+import authRouter from "./api/auth/auth.route";
 import footerRouter from "./api/footer/footer.route";
 import { apiPrefix } from "./common/constants/api";
 import baseResponseMiddleware from "./core/middleware/base-response.middleware";
@@ -31,5 +33,7 @@ app.use(baseResponseMiddleware);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(apiPrefix, footerRouter);
+app.use(apiPrefix, authRouter);
+
 app.use(errorHandlerMiddleware);
 export default app;

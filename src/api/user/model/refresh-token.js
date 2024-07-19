@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 
 export const refreshTokenSchema = new Schema(
   {
-    token: {
+    refresh: {
       type: String,
     },
     createdAt: {

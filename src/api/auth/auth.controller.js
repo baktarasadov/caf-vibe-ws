@@ -8,23 +8,12 @@ export class AuthController {
   }
 
   async register(request, response) {
-    const user = await this.authService.register(request.body);
-
-    const accessToken = "";
-    // generateToken(
-    //   {
-    //     id: user.id,
-    //     login: user.login,
-    //     role: user.role,
-    //     entity: "User",
-    //   },
-    //   "2h",
-    // );
+    const data = await this.authService.register(request.body);
 
     response.success({
       message: "User register success",
       status: StatusCodes.CREATED,
-      data: new AuthDto(user, accessToken),
+      data: new AuthDto(data),
     });
   }
 
