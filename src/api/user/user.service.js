@@ -1,6 +1,5 @@
 import hashPassword from "@/common/helpers/hash-password";
 import { BaseResponse } from "@/core/response/base-response";
-import { APIError } from "@/shared/error-response/error-response";
 import { StatusCodes } from "http-status-codes";
 
 export class UserService {
@@ -12,7 +11,10 @@ export class UserService {
     const data = await this.findByEmail(userDto.contact.email);
 
     if (data) {
-      throw new APIError("Email is already in use", StatusCodes.CONFLICT);
+      throw new BaseResponse.error({
+        message: "Email is already in use",
+        status: StatusCodes.CONFLICT,
+      });
     }
 
     userDto.password = await hashPassword(userDto.password);

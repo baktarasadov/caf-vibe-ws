@@ -1,4 +1,3 @@
-import "express-async-errors";
 import { swaggerSpec, swaggerUi } from "@/core/config/swagger.config";
 import "@/core/di/di-globals";
 import cookieParser from "cookie-parser";

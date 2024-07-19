@@ -1,4 +1,5 @@
 import "@/core/config/env.config";
+import "express-async-errors";
 import { createServer } from "http";
 
 import app from "./app";
