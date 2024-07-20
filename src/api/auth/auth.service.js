@@ -1,5 +1,7 @@
 import { generateToken } from "@/common/helpers/generate-token";
 import { config } from "@/core/config/jwt.config";
+import { BaseResponse } from "@/core/response/base-response";
+import { StatusCodes } from "http-status-codes";
 
 export class AuthService {
   constructor(userService) {
@@ -7,17 +9,30 @@ export class AuthService {
   }
 
   async register(authRegisterDto) {
+    const existingUser = await this.findByEmail(authRegisterDto.contact.email);
+
+    if (existingUser && existingUser.isEmailVerified) {
+      throw new BaseResponse.error({
+        message: "Email is already in use",
+        status: StatusCodes.CONFLICT,
+      });
+    }
+
+    if (existingUser && !existingUser.isEmailVerified) {
+      await this.userService.delete(existingUser._id);
+    }
+
     authRegisterDto.role = 2;
-    const data = await this.userService.create(authRegisterDto);
+    const saveData = await this.userService.create(authRegisterDto);
 
     const payload = {
-      sub: data._id,
-      email: data.contact.email,
+      sub: saveData._id,
+      email: saveData.contact.email,
     };
 
     const token = await this.createToken(payload);
 
-    return { user: data, token };
+    return { user: saveData, token };
   }
 
   async createToken(payload) {

@@ -8,15 +8,6 @@ export class UserService {
   }
 
   async create(userDto) {
-    const data = await this.findByEmail(userDto.contact.email);
-
-    if (data) {
-      throw new BaseResponse.error({
-        message: "Email is already in use",
-        status: StatusCodes.CONFLICT,
-      });
-    }
-
     userDto.password = await hashPassword(userDto.password);
 
     return this.userRepository.create(userDto);
@@ -43,5 +34,11 @@ export class UserService {
     await this.findById(id);
 
     return this.userRepository.update(id, userDto);
+  }
+
+  async delete(id) {
+    await this.findById(id);
+
+    return this.userRepository.delete(id);
   }
 }
