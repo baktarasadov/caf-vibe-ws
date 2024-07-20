@@ -16,6 +16,16 @@ export class AuthController {
     });
   }
 
+  async verifyEmail(request, response) {
+    const data = await this.authService.verifyEmail(request.body);
+
+    response.success({
+      message: "Email verified successfully.",
+      status: StatusCodes.CREATED,
+      data: new AuthDto(data),
+    });
+  }
+
   async login(request, response) {
     const user = await this.authService.login(request.body);
 

@@ -49,6 +49,72 @@ export class AuthService {
     );
   }
 
+  async verifyEmail(verificationDto) {
+    const { code, email } = verificationDto;
+
+    const existingUser = await this.userService.findByEmail(email);
+
+    if (!existingUser) {
+      throw new BaseResponse.error({
+        message: "User with this email does not exist.",
+        status: StatusCodes.CONFLICT,
+      });
+    }
+
+    if (existingUser.emailVerification?.verified) {
+      throw new BaseResponse.error({
+        message: "Your email is already verified. Please login to continue.",
+        status: StatusCodes.BAD_REQUEST,
+      });
+    }
+
+    if (existingUser.emailVerification.code !== code) {
+      throw new BaseResponse.error({
+        message: "Invalid verification code.",
+        status: StatusCodes.BAD_REQUEST,
+      });
+    }
+
+    const now = Date.now();
+
+    if (existingUser.emailVerification.expiresAt < now) {
+      existingUser.emailVerification.code = generateVerificationCode();
+      existingUser.emailVerification.expiresAt = getVerificationCodeExpiry(3);
+
+      await existingUser.save();
+
+      await this.emailService.sendVerificationEmail(
+        existingUser.contact.email,
+        existingUser.emailVerification.code,
+        "Hi, This Email Verification Code",
+      );
+
+      throw new BaseResponse.error({
+        message:
+          "Verification code has expired. A new code has been sent to your email.",
+        status: StatusCodes.BAD_REQUEST,
+      });
+    }
+
+    existingUser.emailVerification.verified = true;
+    existingUser.emailVerification.code = undefined;
+    existingUser.emailVerification.expiresAt = undefined;
+
+    await existingUser.save();
+
+    const payload = {
+      sub: existingUser._id,
+      email,
+    };
+
+    const token = await this.createToken(payload);
+
+    return {
+      token,
+      user: existingUser,
+    };
+  }
+
   async createToken(payload) {
     const { accessSecret, accessExpiresIn, refreshSecret, refreshExpiresIn } =
       config.jwt;

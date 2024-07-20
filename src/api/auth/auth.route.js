@@ -13,6 +13,10 @@ authRouter.post(`${prefix}/login`, (req, res) =>
   authController.login(req, res),
 );
 
+authRouter.post(`${prefix}/verify-email`, (req, res) =>
+  authController.verifyEmail(req, res),
+);
+
 authRouter.post(`${prefix}/register`, (req, res) =>
   authController.register(req, res),
 );
