@@ -8,12 +8,11 @@ export class AuthController {
   }
 
   async register(request, response) {
-    const data = await this.authService.register(request.body);
+    await this.authService.register(request.body);
 
     response.success({
-      message: "User register success",
+      message: "Registration successful. Please verify your email.",
       status: StatusCodes.CREATED,
-      data: new AuthDto(data),
     });
   }
 

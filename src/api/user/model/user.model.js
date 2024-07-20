@@ -1,7 +1,7 @@
 import { contactSchema } from "@/common/schema/model/contact-model.schema";
 import mongoose, { Schema } from "mongoose";
 
-import verificationCodeSchema from "./verification-code ";
+import emailVerification from "./email-verification";
 
 const userSchema = new Schema(
   {
@@ -15,12 +15,12 @@ const userSchema = new Schema(
     },
     password: { type: String, required: true, trim: true },
     contact: contactSchema,
-    emailCodeVerification: {
-      type: verificationCodeSchema,
+    emailVerification: {
+      type: emailVerification,
       required: false,
     },
-    passwordResetCodeVerification: {
-      type: verificationCodeSchema,
+    passwordReset: {
+      type: emailVerification,
       required: false,
     },
     role: { type: Schema.Types.Number, ref: "Role", required: true },
