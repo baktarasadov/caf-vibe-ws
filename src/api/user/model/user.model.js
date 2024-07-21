@@ -2,6 +2,7 @@ import { contactSchema } from "@/common/schema/model/contact-model.schema";
 import mongoose, { Schema } from "mongoose";
 
 import emailVerification from "./email-verification";
+import { refreshTokenSchema } from "./refresh-token";
 
 const userSchema = new Schema(
   {
@@ -15,6 +16,7 @@ const userSchema = new Schema(
     },
     password: { type: String, required: true, trim: true },
     contact: contactSchema,
+    token: refreshTokenSchema,
     emailVerification: {
       type: emailVerification,
       required: false,

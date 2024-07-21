@@ -1,4 +1,4 @@
-import hashPassword from "@/common/helpers/hash-password";
+import { hashPassword } from "@/common/helpers/hash-password";
 import { BaseResponse } from "@/core/response/base-response";
 import { StatusCodes } from "http-status-codes";
 

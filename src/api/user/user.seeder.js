@@ -13,7 +13,7 @@ export class UserSeeder {
       const password = await hashPassword("baktaradmin");
 
       return this.userRepository.create({
-        email: "baktaradmin@gmail.com",
+        contact: { email: "baktaradmin@gmail.com" },
         fullName: "baktar admin",
         password,
         role: 1,

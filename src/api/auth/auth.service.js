@@ -1,4 +1,5 @@
 import { generateToken } from "@/common/helpers/generate-token";
+import { comparePassword } from "@/common/helpers/hash-password";
 import {
   generateVerificationCode,
   getVerificationCodeExpiry,
@@ -47,6 +48,31 @@ export class AuthService {
       savedUser.emailVerification.code,
       "Hi, This Email Verification Code",
     );
+  }
+
+  async login(authloginDto) {
+    const { email, password } = authloginDto;
+
+    const existingUser = await this.userService.findByEmail(email);
+
+    if (
+      !existingUser ||
+      !(await comparePassword(password, existingUser.password))
+    ) {
+      throw new BaseResponse.error({
+        message: "Email or Password is incorrect.",
+        status: StatusCodes.UNAUTHORIZED,
+      });
+    }
+
+    const payload = {
+      sub: existingUser._id,
+      email,
+    };
+
+    const token = await this.createToken(payload);
+
+    return { user: existingUser, token };
   }
 
   async verifyEmail(verificationDto) {
