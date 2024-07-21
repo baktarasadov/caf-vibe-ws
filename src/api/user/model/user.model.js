@@ -21,10 +21,6 @@ const userSchema = new Schema(
       type: emailVerification,
       required: false,
     },
-    passwordReset: {
-      type: emailVerification,
-      required: false,
-    },
     role: { type: Schema.Types.Number, ref: "Role", required: true },
   },
   {
