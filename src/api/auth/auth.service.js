@@ -75,6 +75,30 @@ export class AuthService {
     return { user: existingUser, token };
   }
 
+  async forgotPassword(email) {
+    const existingUser = await this.userService.findByEmail(email);
+
+    if (!existingUser) {
+      throw new BaseResponse.error({
+        message: "User with this email does not exist.",
+        status: StatusCodes.NOT_FOUND,
+      });
+    }
+
+    existingUser.passwordReset = {
+      code: this.generateVerificationCode(),
+      expiresAt: this.getVerificationCodeExpiry(5),
+    };
+
+    await existingUser.save();
+
+    await this.emailService.sendVerificationEmail(
+      existingUser.contact.email,
+      existingUser.passwordReset.code,
+      "Hi, This Email Verification Code",
+    );
+  }
+
   async verifyEmail(verificationDto) {
     const { code, email } = verificationDto;
 
