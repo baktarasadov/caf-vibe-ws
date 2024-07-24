@@ -41,4 +41,17 @@ export class UserService {
 
     return this.userRepository.delete(id);
   }
+
+  async findByEmailOrThrow(email) {
+    const user = await this.findByEmail(email);
+
+    if (!user) {
+      throw new BaseResponse.error({
+        message: "User with this email does not exist.",
+        status: StatusCodes.NOT_FOUND,
+      });
+    }
+
+    return user;
+  }
 }

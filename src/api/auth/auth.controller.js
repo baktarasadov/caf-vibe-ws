@@ -35,4 +35,23 @@ export class AuthController {
       data: new AuthDto(user),
     });
   }
+
+  async forgotPassword(request, response) {
+    await this.authService.forgotPassword(request.body);
+
+    response.success({
+      message: "Password reset email sent. Please check your inbox.",
+      status: StatusCodes.OK,
+    });
+  }
+
+  async resetCodeCheck(request, response) {
+    const data = await this.authService.resetCodeCheck(request.body);
+
+    response.success({
+      message: "Reset code verified  successfully.",
+      status: StatusCodes.OK,
+      data: new AuthDto(data),
+    });
+  }
 }

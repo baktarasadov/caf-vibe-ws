@@ -78,7 +78,10 @@ export class AuthService {
   async forgotPassword(email) {
     const existingUser = await this.userService.findByEmail(email);
 
-    if (!existingUser) {
+    if (
+      !existingUser ||
+      !existingUser.existingUser.emailVerification?.verified
+    ) {
       throw new BaseResponse.error({
         message: "User with this email does not exist.",
         status: StatusCodes.NOT_FOUND,
@@ -95,7 +98,7 @@ export class AuthService {
     await this.emailService.sendVerificationEmail(
       existingUser.contact.email,
       existingUser.passwordReset.code,
-      "Hi, This Email Verification Code",
+      "Hi, This Reset Code",
     );
   }
 
@@ -163,6 +166,60 @@ export class AuthService {
       token,
       user: existingUser,
     };
+  }
+
+  async resetCodeCheck(resetCodeCheckDto) {
+    const { email, code } = resetCodeCheckDto;
+
+    const existingUser = await this.userService.findByEmail(email);
+
+    if (!existingUser || !existingUser.emailVerification?.verified) {
+      throw new Error(
+        "User with this email does not exist or is not verified.",
+      );
+    }
+
+    if (existingUser.emailVerification.code !== code) {
+      throw new BaseResponse.error({
+        message: "Invalid reset code.",
+        status: StatusCodes.BAD_REQUEST,
+      });
+    }
+
+    const now = Date.now();
+
+    if (existingUser.emailVerification.expiresAt < now) {
+      existingUser.emailVerification.code = generateVerificationCode();
+      existingUser.emailVerification.expiresAt = getVerificationCodeExpiry(5);
+
+      await existingUser.save();
+
+      await this.emailService.sendVerificationEmail(
+        existingUser.contact.email,
+        existingUser.emailVerification.code,
+        "Hi, This Reset Code",
+      );
+
+      throw new BaseResponse.error({
+        message:
+          "Reset code has expired. A new code has been sent to your email.",
+        status: StatusCodes.BAD_REQUEST,
+      });
+    }
+
+    existingUser.emailVerification.code = undefined;
+    existingUser.emailVerification.expiresAt = undefined;
+
+    await existingUser.save();
+
+    const payload = {
+      sub: existingUser._id,
+      email,
+    };
+
+    const token = await this.verificationToken(payload);
+
+    return { user: existingUser, token };
   }
 
   async createToken(payload) {
