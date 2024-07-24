@@ -23,6 +23,6 @@ authRouter.post(`${prefix}/register`, (req, res) =>
 
 authRouter.post(`${prefix}/forgot-password`, authController.forgotPassword);
 
-authRouter.post(`${prefix}/reset-code-check`, authController.resetCodeCheck);
+// authRouter.post(`${prefix}/reset-code-check`, authController.resetCodeCheck);
 
 export default authRouter;

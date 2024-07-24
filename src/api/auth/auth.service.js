@@ -1,5 +1,5 @@
-import { generateToken } from "@/common/helpers/generate-token";
 import { comparePassword } from "@/common/helpers/hash-password";
+import { generateToken } from "@/common/helpers/jwt-token";
 import {
   generateVerificationCode,
   getVerificationCodeExpiry,
